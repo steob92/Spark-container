@@ -1,5 +1,5 @@
 # Use the official Python image from the Docker Hub
-FROM python:3.12-slim
+FROM python:3.12-slim AS build
 
 # Install apt packages
 RUN apt-get update && apt-get install -y \
@@ -8,10 +8,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
-WORKDIR /env
+WORKDIR /tmp_build
 
 # Copy the current directory contents into the container at /app
-COPY . /env
+COPY . /tmp_build
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt && \
@@ -24,6 +24,11 @@ RUN git clone https://github.com/dflemin3/approxposterior.git && \
     # Because sklearn in deciprecated and gives an error
     sed -i 's/sklearn/scikit-learn/g' setup.py && pip install . && \
     cd - && rm -rf approxposterior
-WORKDIR /env
+
+# Multi stage to help with file size
+FROM python:3.12-slim AS final
+# Copy across python files
+COPY --from=build /usr/local/lib/python3.12 /usr/local/lib/python3.12
+
 
 CMD [ "python" ]
