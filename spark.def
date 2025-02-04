@@ -1,0 +1,39 @@
+Bootstrap: docker
+From: python:{{ VERSION }}
+Stage: build
+
+%arguments
+    VERSION=3.12-slim
+
+
+%files
+    requirements.txt /env/requirements.txt
+
+%post
+    apt-get update && apt-get install -y \
+        build-essential \
+        git \
+        && rm -rf /var/lib/apt/lists/*
+
+
+    cd /env/ 
+    # Install any needed packages specified in requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+        pip install --no-cache git+https://github.com/tardis-sn/tardis.git
+
+    # Insert solution for approxposterior here:
+    git clone https://github.com/dflemin3/approxposterior.git && \
+        cd approxposterior && \
+        # Because sklearn in deciprecated and gives an error
+        sed -i 's/sklearn/scikit-learn/g' setup.py && pip install . && \
+        cd - && rm -rf approxposterior
+
+
+%runscript
+    python
+
+%help
+    Container with tardis and approxposterior installed for use with spark
+
+%test
+    python -c "import tardis;import tables;import approxposterior;import h5py;exit(0)"
