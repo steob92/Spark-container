@@ -6,18 +6,18 @@ Both [Docker](./Dockerfile) and [Apptainer/Singularity](./spark.def) versions ar
 
 To build with docker simply run:
 ```bash
-docker build -t USERNAME:spark .
+docker build -t <USERNAME>/spark:latest .
 ```
 
 Once the build is complete, the container can be run with, for example:
 ```bash
-docker run --rm -it --user `id -u`:`id -g`  -v /path/to/files:/local_files -v /path/to/working_dir:/working_dir -w /working_dir USERNAME:spark python script.py /local_files/my_data.yml
+docker run --rm -it --user `id -u`:`id -g`  -v /path/to/files:/local_files -v /path/to/working_dir:/working_dir -w /working_dir <USERNAME>/spark:latest python script.py /local_files/my_data.yml
 ```
 Note `--user \`id -u\`:\`id -g\`` enusres that the user within the docker container has the same permissions as the user. 
 
 Or to start an intervative session:
 ```bash
-docker run --rm -it --user `id -u`:`id -g`  -v /path/to/files:/local_files -v /path/to/working_dir:/working_dir -w /working_dir USERNAME:spark bash
+docker run --rm -it --user `id -u`:`id -g`  -v /path/to/files:/local_files -v /path/to/working_dir:/working_dir -w /working_dir <USERNAME>/spark:latest bash
 ```
 
 
@@ -38,4 +38,13 @@ If you are working on Digitial Research Alliance of Canada clusters (e.g. Narval
 Or to start an intervative session:
 ```bash
 apptainer shell  --bind /path/to/files:/local_files --bind /path/to/working_dir:/working_dir -w /working_dir spark.sif
+```
+
+
+## Running Apptainer from Docker
+
+If you have access to both Apptainer and Docker (for example on your own machine), you can create an apptainer image directly from the previously created Docker Image:
+
+```bash
+apptainer pull spark_docker.sif docker-daemon:<USERNAME>/spark:latest
 ```
