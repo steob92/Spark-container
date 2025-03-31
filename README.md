@@ -9,15 +9,31 @@ To build with docker simply run:
 docker build -t <USERNAME>/spark:latest .
 ```
 
+Or pull directly from this repo:
+```bash
+docker pull ghcr.io/steob92/spark-container:v0.1.0
+```
+
 Once the build is complete, the container can be run with, for example:
 ```bash
 docker run --rm -it --user `id -u`:`id -g`  -v /path/to/files:/local_files -v /path/to/working_dir:/working_dir -w /working_dir <USERNAME>/spark:latest python script.py /local_files/my_data.yml
 ```
+Or if using this repo:
+```bash
+docker run --rm -it --user `id -u`:`id -g`  -v /path/to/files:/local_files -v /path/to/working_dir:/working_dir -w /working_dir ghcr.io/steob92/spark-container:v0.1.0 python script.py /local_files/my_data.yml
+```
+
+
 Note `--user \`id -u\`:\`id -g\`` enusres that the user within the docker container has the same permissions as the user. 
 
 Or to start an intervative session:
 ```bash
 docker run --rm -it --user `id -u`:`id -g`  -v /path/to/files:/local_files -v /path/to/working_dir:/working_dir -w /working_dir <USERNAME>/spark:latest bash
+```
+
+Using this repo:
+```
+docker run --rm -it --user `id -u`:`id -g`  -v /path/to/files:/local_files -v /path/to/working_dir:/working_dir -w /working_dir ghcr.io/steob92/spark-container:v0.1.0 bash
 ```
 
 
@@ -47,4 +63,9 @@ If you have access to both Apptainer and Docker (for example on your own machine
 
 ```bash
 apptainer pull spark_docker.sif docker-daemon:<USERNAME>/spark:latest
+```
+
+or pulling directly from github:
+```bash
+apptainer pull spark_docker.sif docker://ghcr.io/steob92/spark-container:v0.1.0
 ```
